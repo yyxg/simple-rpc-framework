@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
+ * 读写一个本地文件，实现注册服务 registerService 方法时，把服务提供者保存到本地文件中；
+ * 实现查找服务 lookupService 时，就是去本地文件中读出所有的服务提供者，找到对应的服务提供者，然后返回。
  * @author LiYue
  * Date: 2019/9/20
  */

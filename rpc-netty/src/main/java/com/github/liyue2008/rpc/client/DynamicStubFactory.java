@@ -24,6 +24,11 @@ import java.util.Map;
  * Date: 2019/9/27
  */
 public class DynamicStubFactory implements StubFactory{
+
+
+    /**
+     *     %s	字符串类型
+     */
     private final static String STUB_SOURCE_TEMPLATE =
             "package com.github.liyue2008.rpc.client.stubs;\n" +
             "import com.github.liyue2008.rpc.serialize.SerializeSupport;\n" +
@@ -48,11 +53,38 @@ public class DynamicStubFactory implements StubFactory{
     public <T> T createStub(Transport transport, Class<T> serviceClass) {
         try {
             // 填充模板
+            //HelloServiceStub
             String stubSimpleName = serviceClass.getSimpleName() + "Stub";
+            //com.github.liyue2008.rpc.hello.HelloService
             String classFullName = serviceClass.getName();
+            //com.github.liyue2008.rpc.client.stubs.HelloServiceStub
             String stubFullName = "com.github.liyue2008.rpc.client.stubs." + stubSimpleName;
+            // hello
             String methodName = serviceClass.getMethods()[0].getName();
 
+            //填充源代码模板 把STUB_SOURCE_TEMPLATE 中的 %s 用后面的参数替换
+
+
+            /*  填充后的代码示例
+
+            package com.github.liyue2008.rpc.client.stubs;
+            import com.github.liyue2008.rpc.serialize.SerializeSupport;
+
+            public class HelloServiceStub extends AbstractStub implements com.github.liyue2008.rpc.hello.HelloService {
+                @Override
+                public String hello(String arg) {
+                    return SerializeSupport.parse(
+                            invokeRemote(
+                                    new RpcRequest(
+                                            "com.github.liyue2008.rpc.hello.HelloService",
+                                            "hello",
+                                            SerializeSupport.serialize(arg)
+                                    )
+                            )
+                    );
+                }
+            }
+            */
             String source = String.format(STUB_SOURCE_TEMPLATE, stubSimpleName, classFullName, methodName, classFullName, methodName);
             // 编译源代码
             JavaStringCompiler compiler = new JavaStringCompiler();
@@ -60,8 +92,9 @@ public class DynamicStubFactory implements StubFactory{
             // 加载编译好的类
             Class<?> clazz = compiler.loadClass(stubFullName, results);
 
-            // 把Transport赋值给桩
+            // 反射获取实例
             ServiceStub stubInstance = (ServiceStub) clazz.newInstance();
+            // 把Transport赋值给桩
             stubInstance.setTransport(transport);
             // 返回这个桩
             return (T) stubInstance;

@@ -44,6 +44,7 @@ public interface RpcAccessPoint extends Closeable{
     <T> URI addServiceProvider(T service, Class<T> serviceClass);
 
     /**
+     * 通过 SPI 机制加载所有的 NameService 的实现类，然后根据给定的 URI 中的协议，去匹配支持这个协议的实现类，然后返回这个实现的引用
      * 获取注册中心的引用
      * @param nameServiceUri 注册中心URI
      * @return 注册中心引用

@@ -28,13 +28,30 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author LiYue
  * Date: 2019/9/27
+ * 所有动态生成的桩都继承这个抽象类
+ *
+ * 动态生成的这个桩，它每个方法的逻辑都是一样的，都是把类名、方法名和方法的参数封装成请求，
+ * 调用invokeRemote 方法   发给服务端，收到服务端响应之后再把结果作为返回值，返回给调用方
+ *
  */
 public abstract class AbstractStub implements ServiceStub {
     protected Transport transport;
 
+
+    /**
+     * 进行远程调用
+     * @param request
+     * @return
+     */
     protected byte [] invokeRemote(RpcRequest request) {
+
+        //把请求类型、 版本号、封装请求头
         Header header = new Header(ServiceTypes.TYPE_RPC_REQUEST, 1, RequestIdSupport.next());
+
+        //把请求进行序列
         byte [] payload = SerializeSupport.serialize(request);
+
+        //包装请求
         Command requestCommand = new Command(header, payload);
         try {
             Command responseCommand = transport.send(requestCommand).get();

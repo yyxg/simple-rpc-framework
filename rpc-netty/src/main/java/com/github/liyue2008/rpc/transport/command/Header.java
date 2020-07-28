@@ -18,8 +18,17 @@ package com.github.liyue2008.rpc.transport.command;
  * Date: 2019/9/20
  */
 public class Header {
+    /**
+     *
+     */
     private int requestId;
+    /**
+     *
+     */
     private int version;
+    /**
+     *
+     */
     private int type;
 
     public Header() {}
@@ -29,6 +38,8 @@ public class Header {
         this.version = version;
     }
     public int getRequestId() {
+
+
         return requestId;
     }
 
@@ -55,4 +66,5 @@ public class Header {
     public void setType(int type) {
         this.type = type;
     }
+
 }

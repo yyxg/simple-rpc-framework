@@ -25,6 +25,7 @@ import java.io.File;
 import java.net.URI;
 
 /**
+ * 服务端
  * @author LiYue
  * Date: 2019/9/20
  */
@@ -32,8 +33,13 @@ public class Server {
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
     public static void main(String [] args) throws Exception {
 
+
         String serviceName = HelloService.class.getCanonicalName();
-        File tmpDirFile = new File(System.getProperty("java.io.tmpdir"));
+
+        String temDir = "/Users/xialihui/Desktop/myworkSpace/geek/simple-rpc-framework/MQFile";
+        File tmpDirFile = new File(temDir);
+//        File tmpDirFile = new File(System.getProperty("java.io.tmpdir"));
+
         File file = new File(tmpDirFile, "simple_rpc_name_service.data");
         HelloService helloService = new HelloServiceImpl();
         logger.info("创建并启动RpcAccessPoint...");
@@ -44,6 +50,7 @@ public class Server {
             logger.info("向RpcAccessPoint注册{}服务...", serviceName);
             URI uri = rpcAccessPoint.addServiceProvider(helloService, HelloService.class);
             logger.info("服务名: {}, 向NameService注册...", serviceName);
+            //向注册中心注册服务
             nameService.registerService(serviceName, uri);
             logger.info("开始提供服务，按任何键退出.");
             //noinspection ResultOfMethodCallIgnored

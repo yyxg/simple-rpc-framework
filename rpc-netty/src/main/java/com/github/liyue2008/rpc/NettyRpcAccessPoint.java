@@ -41,7 +41,11 @@ public class NettyRpcAccessPoint implements RpcAccessPoint {
     private TransportServer server = null;
     private TransportClient client = ServiceSupport.load(TransportClient.class);
     private final Map<URI, Transport> clientMap = new ConcurrentHashMap<>();
+    /**
+     * 通过SPI获取StubFactory的一个实例
+     */
     private final StubFactory stubFactory = ServiceSupport.load(StubFactory.class);
+
     private final ServiceProviderRegistry serviceProviderRegistry = ServiceSupport.load(ServiceProviderRegistry.class);
 
     @Override

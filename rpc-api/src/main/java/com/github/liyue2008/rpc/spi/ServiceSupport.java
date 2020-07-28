@@ -26,13 +26,34 @@ import java.util.stream.StreamSupport;
  * Date: 2019-03-26
  */
 public class ServiceSupport {
+
+
     private final static Map<String, Object> singletonServices = new HashMap<>();
+
+
+    /**
+     * 通过SPI 加载所有service 的实现类 并
+     * 通过map转换类型
+     * 拿到第一个对象 相当于 list.get(0)
+     * @param service
+     * @param <S>
+     * @return
+     */
+
     public synchronized static <S> S load(Class<S> service) {
         return StreamSupport.
                 stream(ServiceLoader.load(service).spliterator(), false)
                 .map(ServiceSupport::singletonFilter)
                 .findFirst().orElseThrow(ServiceLoadException::new);
     }
+    /**
+     * 通过SPI 加载所有service 的实现类
+     * 通过map转换类型
+     *
+     * @param service
+     * @param <S>
+     * @return
+     */
     public synchronized static <S> Collection<S> loadAll(Class<S> service) {
         return StreamSupport.
                 stream(ServiceLoader.load(service).spliterator(), false)

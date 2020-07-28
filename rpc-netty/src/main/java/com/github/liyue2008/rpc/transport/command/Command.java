@@ -14,6 +14,7 @@
 package com.github.liyue2008.rpc.transport.command;
 
 /**
+ * 请求和响应的抽象类
  * @author LiYue
  * Date: 2019/9/20
  */

@@ -27,9 +27,29 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public class SerializeSupport {
     private static final Logger logger = LoggerFactory.getLogger(SerializeSupport.class);
-    private static Map<Class<?>/*序列化对象类型*/, Serializer<?>/*序列化实现*/> serializerMap = new HashMap<>();
-    private static Map<Byte/*序列化实现类型*/, Class<?>/*序列化对象类型*/> typeMap = new HashMap<>();
+    /**
+     *Class<?> 序列化对象类型,即 需要对哪一种对象进行序列化
+     *
+     * Serializer<?> 序列化实现类，每一种对象对应着一个序列化的实现类
+     *
+     *
+     * String.class ,StringSerializer
+     */
+    private static Map<Class<?>, Serializer<?>> serializerMap = new HashMap<>();
 
+    /**
+     *Byte序列化实现类型
+     *
+     * Class<?> 序列化对象类型
+     *
+     * 0 ,String.class
+     */
+    private static Map<Byte, Class<?>> typeMap = new HashMap<>();
+
+    /**
+     * 在SerializeSupport 初始化的时候 会执行static 加载
+     *
+     */
     static {
         for (Serializer serializer : ServiceSupport.loadAll(Serializer.class)) {
             registerType(serializer.type(), serializer.getSerializeClass(), serializer);
@@ -38,6 +58,12 @@ public class SerializeSupport {
                     serializer.type());
         }
     }
+
+    /**
+     * 在序列化的时候把类型 放在了数组的第一位
+     * @param buffer
+     * @return
+     */
     private static byte parseEntryType(byte[] buffer) {
         return buffer[0];
     }
@@ -59,6 +85,7 @@ public class SerializeSupport {
     }
 
     private static  <E> E parse(byte[] buffer, int offset, int length) {
+        // 通过序列化实现类的类型 找到 序列化对象类型  再去找对应的序列化实现类 去反序列化
         byte type = parseEntryType(buffer);
         @SuppressWarnings("unchecked")
         Class<E> eClass = (Class<E> )typeMap.get(type);
@@ -70,6 +97,12 @@ public class SerializeSupport {
 
     }
 
+    /**
+     * 序列化
+     * @param entry
+     * @param <E>
+     * @return
+     */
     public static <E> byte [] serialize(E  entry) {
         @SuppressWarnings("unchecked")
         Serializer<E> serializer = (Serializer<E>) serializerMap.get(entry.getClass());
