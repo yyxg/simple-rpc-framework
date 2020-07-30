@@ -45,6 +45,9 @@ public class Server {
         logger.info("创建并启动RpcAccessPoint...");
         try(RpcAccessPoint rpcAccessPoint = ServiceSupport.load(RpcAccessPoint.class);
             Closeable ignored = rpcAccessPoint.startServer()) {
+
+            //file.toURI()  将文件转换成一个链接，可以网络访问
+            // file:/Users/xialihui/Desktop/myworkSpace/geek/simple-rpc-framework/MQFile/simple_rpc_name_service.data
             NameService nameService = rpcAccessPoint.getNameService(file.toURI());
             assert nameService != null;
             logger.info("向RpcAccessPoint注册{}服务...", serviceName);
